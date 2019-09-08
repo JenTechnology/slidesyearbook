@@ -18,7 +18,7 @@ function onInstall(e){
 function initialSetup(){
   var html = HtmlService.createHtmlOutputFromFile('initialSidebar')
   .setSandboxMode(HtmlService.SandboxMode.IFRAME)
-  .setTitle("Run one time")
+  .setTitle('Run one time')
   .setWidth(300);
   SpreadsheetApp.getUi()
   .showSidebar(html);
@@ -28,13 +28,93 @@ function initialSetup(){
 //question - what happens to user accidently uses this twice
 //what fail safe is needed
 
-function launchAddon(){
+function mainSidebar(){
   var html = HtmlService.createHtmlOutputFromFile('mainSidebar')
   .setSandboxMode(HtmlService.SandboxMode.IFRAME)
-  .setTitle("SlidesYearbook")
+  .setTitle('SlidesYearbook')
   .setWidth(300);
   SpreadsheetApp.getUi()
   .showSidebar(html);
 }
 
 //launches add on with steps needed to organize and push photos to Slides
+
+function initialFormsSetup(){
+  var form = FormApp.create('delete Example');
+  var ss = SpreadsheetApp.getActive();
+  var sheet = ss.getSheets()[0].autoResizeRows(1, 1);
+  form.setDestination(FormApp.DestinationType.SPREADSHEET, ss.getId());
+  
+  //currently add on starts IN a spreadsheet container
+  //This will need to change later but is okay during the build
+  //first step is to create the Form
+  
+  item='Email';
+  var help='Do not delete this question. You can make this question optional or required depending on  how is entering the data - one person vs all students';
+  form.addTextItem()
+  .setTitle(item)
+  .setHelpText(help)
+  .setRequired(false);
+  
+  //at minimum the email column is needed as a place holder
+  
+  item= 'Section';
+  var help = 'Change and add sections that reflection your school';
+  var choices = ['01 Eighth Grade', '02 Seventh Grade', '03 Sixth Grade', '04 Admin', '05 Support Staff', '06 Teachers', '07 Aides', '08 Cafeteria & Custodians', '09 CPALS & Bus Drivers'];
+  form.addListItem()
+  .setTitle(item)
+  .setChoiceValues(choices)
+  .setHelpText(help)
+  .setRequired(true);
+  
+  //Sections will be used to sort names
+  //User must change choices to reflect their grade levels
+  //Grade levels change depending on the school but staff titles stay the same
+  
+  item = 'Upload Portraits';
+  var help='Change to File upload question type -> Continue -> Allow only specific file types -> 1 -> 1 GB. Remove description when done';
+  form.addTextItem()
+  .setTitle(item)
+  .setHelpText(help)
+  .setRequired(true);
+  
+  //I wish I could make the question type default to File upload
+  //until then help directions will have to do
+  
+  item = 'First Name';
+  var help = 'Make sure to properly capitalize the first name';
+    form.addTextItem()
+  .setTitle(item)
+  .setHelpText(help)
+  .setRequired(true);
+  
+  item = 'Last Name';
+  var help = 'Make sure to properly capitalize the last name';
+    form.addTextItem()
+  .setTitle(item)
+  .setHelpText(help)
+  .setRequired(true);
+  
+  //First and last names will be combined later in the process
+  
+  Logger.log('Form created');
+  
+  //if Log information appears I know there are no errors in the previous section
+  
+  var ss = SpreadsheetApp.getActive();
+  ss.getActiveSheet().setName('Link to Form');
+  ss.getRange('B:B').activate();
+  ss.getActiveSheet().setColumnWidth(2, 300);
+  ss.getActiveRangeList().setWrapStrategy(SpreadsheetApp.WrapStrategy.CLIP);
+  
+  ss.getRange('B1').setValue('Open the links to edit and View the Form').setBackground('#999999').setFontColor('#FFFFFF');
+  ss.getRange('A2').setValue('Edit Form');
+  ss.getRange('B2').setValue('' +form.getEditUrl()).setBackground('d9d2e9');
+  ss.getRange('A3').setValue('Open Form:');
+  ss.getRange('B3').setValue('' +form.getPublishedUrl()).setBackground('#fff2cc');
+  
+  //question - I want the value for B2 to become a button in the sidebar
+  //how do I do this
+  
+  Logger.log('Links added');
+}
