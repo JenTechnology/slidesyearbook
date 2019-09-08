@@ -1,0 +1,40 @@
+function onOpen(e) {
+  SpreadsheetApp.getUi().createAddonMenu()
+  .addItem('Intial Setup', 'initialSetup')
+  .addItem('Launch SlidesYearbook', 'mainSidebar')
+  .addToUi()
+  
+}
+
+//creates menu on open
+//includes two options
+//option 1 is initial setup that will only be used once
+//option 2 will launch slidesyearbook
+
+function onInstall(e){
+  onOpen(e);
+}
+
+function initialSetup(){
+  var html = HtmlService.createHtmlOutputFromFile('initialSidebar')
+  .setSandboxMode(HtmlService.SandboxMode.IFRAME)
+  .setTitle("Run one time")
+  .setWidth(300);
+  SpreadsheetApp.getUi()
+  .showSidebar(html);
+}
+
+//opens to initial sidebar with HTML user interface
+//question - what happens to user accidently uses this twice
+//what fail safe is needed
+
+function launchAddon(){
+  var html = HtmlService.createHtmlOutputFromFile('mainSidebar')
+  .setSandboxMode(HtmlService.SandboxMode.IFRAME)
+  .setTitle("SlidesYearbook")
+  .setWidth(300);
+  SpreadsheetApp.getUi()
+  .showSidebar(html);
+}
+
+//launches add on with steps needed to organize and push photos to Slides
